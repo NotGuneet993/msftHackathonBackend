@@ -63,7 +63,7 @@ def process_video(video_path, duration_secs=2.5):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-    while len(data) < num_frames and last_valid_frame and last_landmarks:
+    while len(data) < num_frames and last_valid_frame is not None and last_landmarks is not None:
         data.append({"frame": frame_num, "landmarks": last_landmarks})
         output_frames.append(last_valid_frame.copy())
         frame_num += 1
@@ -120,13 +120,21 @@ def save_video(frames, video_name, output_dir="../videos/annotated"):
     out.release()
     print(f"Saved annotated video to {out_path}")
 
+def get_next_index(csv_dir):
+    existing = sorted(glob(os.path.join(csv_dir, "squat*.csv")))
+    if not existing:
+        return 1
+    last_file = os.path.basename(existing[-1])
+    last_num = int(''.join(filter(str.isdigit, last_file)))
+    return last_num + 1
+
 def main():
     input_dir = "../videos/raw"
     output_csv_dir = "../data/csvs"
     os.makedirs(output_csv_dir, exist_ok=True)
 
     videos = sorted(glob(os.path.join(input_dir, "*.mp4")))
-    start_index = 1
+    start_index = get_next_index(output_csv_dir)
 
     for i, video_path in enumerate(videos):
         squat_num = start_index + i
@@ -138,6 +146,13 @@ def main():
 
         save_to_csv(data, os.path.join(output_csv_dir, f"{video_id}.csv"), label, issue, video_id)
         save_video(annotated_frames, video_id)
+
+        # Delete raw video after successful processing
+        try:
+            os.remove(video_path)
+            print(f"Deleted {video_path}")
+        except Exception as e:
+            print(f"Could not delete {video_path}: {e}")
 
 if __name__ == "__main__":
     main()
