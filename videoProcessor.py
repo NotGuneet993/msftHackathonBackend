@@ -67,7 +67,7 @@ for filename in sorted(os.listdir(raw_videos_dir)):
     base = filename.lower().replace(".mp4", "")
     parts = base.split("_")
     if len(parts) == 3 and parts[1] == desc:
-        output_csv = f"buttwink_{counter}.csv"
+        output_csv = f"{desc}_{counter}.csv"
         counter += 1
         video_path = os.path.join(raw_videos_dir, filename)
         process_video_to_csv(video_path, output_csv)
