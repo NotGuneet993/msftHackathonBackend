@@ -10,7 +10,7 @@ import pandas as pd
 # you need an output dir called "outputs"
 
 # make sure all your name_desc_#.mp4 
-desc = ""       # example: mine is "buttwink"
+desc = "leanforward"       # example: mine is "buttwink"
 
 mp_pose = mp.solutions.pose
 pose = mp_pose.Pose(static_image_mode=True)
