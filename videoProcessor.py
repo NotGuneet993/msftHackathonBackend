@@ -58,6 +58,38 @@ def process_video_to_csv(video_path, csv_name):
     df.to_csv(csv_path, index=False)
     print(f"Saved: {csv_path}")
 
+def draw_exoskeleton_on_video(input_path, output_path):
+    import cv2
+    import mediapipe as mp
+    mp_pose = mp.solutions.pose
+    mp_drawing = mp.solutions.drawing_utils
+
+    cap = cv2.VideoCapture(input_path)
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    # Fix: Use 'avc1' for .mp4 on macOS for better browser compatibility
+    out = cv2.VideoWriter(output_path, cv2.VideoWriter_fourcc(*'avc1'), fps, (width, height))
+
+    with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as pose:
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                break
+            image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = pose.process(image)
+            if results.pose_landmarks:
+                mp_drawing.draw_landmarks(
+                    frame,
+                    results.pose_landmarks,
+                    mp_pose.POSE_CONNECTIONS
+                )
+            out.write(frame)
+    cap.release()
+    out.release()
+    return True
+
 # Only run this if the script is executed directly, not on import
 if __name__ == "__main__":
     raw_videos_dir = "rawVideos"
