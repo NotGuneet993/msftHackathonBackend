@@ -5,13 +5,13 @@ from pydantic import BaseModel
 app = FastAPI()
 
 # Allow CORS for all origins (you can restrict as needed)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 class NameRequest(BaseModel):
     name: str
