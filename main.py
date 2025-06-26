@@ -9,13 +9,13 @@ from videoProcessor import process_video_to_csv, draw_exoskeleton_on_video
 app = FastAPI()
 
 # Allow CORS for all origins (you can restrict as needed)
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["*"],
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 class NameRequest(BaseModel):
     name: str
