@@ -1,4 +1,3 @@
-
 import os
 import cv2
 import mediapipe as mp
@@ -59,16 +58,21 @@ def process_video_to_csv(video_path, csv_name):
     df.to_csv(csv_path, index=False)
     print(f"Saved: {csv_path}")
 
-raw_videos_dir = "rawVideos"
-counter = 1
-for filename in sorted(os.listdir(raw_videos_dir)):
-    if not filename.endswith(".mp4"):
-        continue
-    base = filename.lower().replace(".mp4", "")
-    parts = base.split("_")
-    if len(parts) == 3 and parts[1] == desc:
-        output_csv = f"{desc}_{counter}.csv"
-        counter += 1
-        video_path = os.path.join(raw_videos_dir, filename)
-        process_video_to_csv(video_path, output_csv)
+# Only run this if the script is executed directly, not on import
+if __name__ == "__main__":
+    raw_videos_dir = "rawVideos"
+    if not os.path.exists(raw_videos_dir):
+        print(f"Directory '{raw_videos_dir}' does not exist. Exiting.")
+    else:
+        counter = 1
+        for filename in sorted(os.listdir(raw_videos_dir)):
+            if not filename.endswith(".mp4"):
+                continue
+            base = filename.lower().replace(".mp4", "")
+            parts = base.split("_")
+            if len(parts) == 3 and parts[1] == desc:
+                output_csv = f"{desc}_{counter}.csv"
+                counter += 1
+                video_path = os.path.join(raw_videos_dir, filename)
+                process_video_to_csv(video_path, output_csv)
 
