@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Video</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .container { max-width: 400px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        input[type="file"] { margin-bottom: 16px; }
+        button { padding: 8px 16px; }
+        #result { margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Upload a Video File</h2>
+    <form id="uploadForm">
+        <input type="file" id="videoFile" name="file" accept="video/*" required><br>
+        <button type="submit">Upload</button>
+    </form>
+    <div id="result"></div>
+    <video id="videoPlayer" width="320" height="240" controls style="display:none; margin-top:20px;"></video>
+</div>
+<script>
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const fileInput = document.getElementById('videoFile');
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        const resultDiv = document.getElementById('result');
+        resultDiv.textContent = 'Uploading...';
+        try {
+            const response = await fetch('http://127.0.0.1:8000/api/upload_video', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            if (data.filename) {
+                // Set the video element source to the GET endpoint
+                const videoPlayer = document.getElementById('videoPlayer');
+                const videoUrl = `http://127.0.0.1:8000/videos/${encodeURIComponent(data.filename)}`;
+                videoPlayer.src = videoUrl;
+                videoPlayer.style.display = 'block';
+                videoPlayer.load();
+                videoPlayer.play();
+                resultDiv.textContent = '';
+            } else {
+                resultDiv.textContent = 'Error: ' + (data.error || JSON.stringify(data));
+            }
+        } catch (err) {
+            resultDiv.textContent = 'Upload failed.';
+        }
+    });
+</script>
+</body>
+</html>
