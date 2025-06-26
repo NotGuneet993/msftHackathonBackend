@@ -27,3 +27,4 @@ coverage.xml
 .cache
 .ipynb_checkpoints/
 .env
+rawVideos/
